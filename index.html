@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Knockout.js Demo</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/bootstrap-theme.min.css">
+	<link rel="stylesheet" href="css/demo.css">
+</head>
+<body>
+	<div class="container">
+		<h1>Knockout Demo</h1>
+		<nav class="navbar navbar-default" role="navigation">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#" data-bind="text: appName">
+					
+				</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav" data-bind="foreach: menuButtons">
+					<li data-bind="css: { active: name === $root.pageName }">
+						<a href="#" data-bind="text: name, attr: { href: url }">Home</a>
+					</li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+						<form class="navbar-form navbar-left" role="search">
+							<div class="form-group">
+								<input type="text" class="form-control" placeholder="Filter" data-bind="value: filter, valueUpdate: 'afterkeydown'">
+							</div>
+						</form>
+					</li>
+				</ul>
+			</div><!-- /.navbar-collapse -->
+		</nav>
+		<div class="alert alert-warning" style="display: none;">
+			<button type="button" class="close" data-bind="click: hideAlert" aria-hidden="true">&times;</button>
+			<strong>Warning!</strong> <span data-bind="text: errorMessage"></span>
+		</div>
+		<div class="row">
+			<div class="col-md-8">
+				<h3>Latest Items</h3>
+				<ol id="lastestItems" data-bind="foreach: latestItems">
+					<li><a href="#" data-bind="text: name"></a></li>
+				</ol>
+			</div>
+			<div class="col-md-4">
+				<h3>Filtered Items</h3>
+				<ul data-bind="foreach: filteredItems">
+					<li><a href="#" data-bind="text: name"></a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<script src="lib/knockout-2.3.0.js"></script>
+	<script src="lib/jquery-1.10.2.min.js"></script>
+	<script src="lib/bootstrap.min.js"></script>
+	<script src="lib/knockout.mapping-latest.js"></script>
+	<script src="js/ViewModel.js"></script>
+	<script src="js/ItemVM.js"></script>
+	<script src="data/fakeItems.js"></script>
+	<script>
+		var vm;
+		$(function() {
+			vm = new ViewModel();
+			vm.pageName = 'Home';
+			ko.applyBindings(vm);
+
+			// Handlers
+			$('#lastestItems').on('click', function(event) {
+				var element = $(event.target),
+				context = ko.contextFor(event.target);
+				if(element.is('a') && context) {
+					context.$root.addItemToCheckout(context.$data);
+				}
+			});
+		});
+	</script>
+</body>
+</html>
