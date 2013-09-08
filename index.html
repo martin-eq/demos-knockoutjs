@@ -26,9 +26,15 @@
 
 			<!-- Collect the nav links, forms, and other content for toggling -->
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
-				<ul class="nav navbar-nav" data-bind="foreach: menuButtons">
-					<li data-bind="css: { active: name === $root.pageName }">
-						<a href="#" data-bind="text: name, attr: { href: url }">Home</a>
+				<ul class="nav navbar-nav">
+					<li id="home">
+						<a href="#/home">Home</a>
+					</li>
+					<li id="catalog">
+						<a href="#/catalog">Catalog</a>
+					</li>
+					<li id="checkout">
+						<a href="#/checkout">Checkout <span class="badge" data-bind="text: checkoutCount"></span></a>
 					</li>
 				</ul>
 				<ul class="nav navbar-nav navbar-right">
@@ -43,46 +49,27 @@
 			</div><!-- /.navbar-collapse -->
 		</nav>
 		<div class="alert alert-warning" style="display: none;">
-			<button type="button" class="close" data-bind="click: hideAlert" aria-hidden="true">&times;</button>
+			<button type="button" class="close" data-bind="click: helpers.hideAlert" aria-hidden="true">&times;</button>
 			<strong>Warning!</strong> <span data-bind="text: errorMessage"></span>
 		</div>
-		<div class="row">
-			<div class="col-md-8">
-				<h3>Latest Items</h3>
-				<ol id="lastestItems" data-bind="foreach: latestItems">
-					<li><a href="#" data-bind="text: name"></a></li>
-				</ol>
-			</div>
-			<div class="col-md-4">
-				<h3>Filtered Items</h3>
-				<ul data-bind="foreach: filteredItems">
-					<li><a href="#" data-bind="text: name"></a></li>
-				</ul>
-			</div>
+		<div id="section">
 		</div>
 	</div>
-	<script src="lib/knockout-2.3.0.js"></script>
+	<script src="lib/debug/knockout-2.3.0.debug.js"></script>
 	<script src="lib/jquery-1.10.2.min.js"></script>
 	<script src="lib/bootstrap.min.js"></script>
-	<script src="lib/knockout.mapping-latest.js"></script>
+	<script src="lib/sammy-latest.min.js"></script>
 	<script src="js/ViewModel.js"></script>
-	<script src="js/ItemVM.js"></script>
-	<script src="data/fakeItems.js"></script>
+	<script src="js/ItemViewModel.js"></script>
+	<script src="js/HomeViewModel.js"></script>
+	<script src="js/CatalogViewModel.js"></script>
+	<script src="js/CheckoutViewModel.js"></script>
+	<script src="js/helpers.js"></script>
 	<script>
 		var vm;
 		$(function() {
 			vm = new ViewModel();
-			vm.pageName = 'Home';
 			ko.applyBindings(vm);
-
-			// Handlers
-			$('#lastestItems').on('click', function(event) {
-				var element = $(event.target),
-				context = ko.contextFor(event.target);
-				if(element.is('a') && context) {
-					context.$root.addItemToCheckout(context.$data);
-				}
-			});
 		});
 	</script>
 </body>

@@ -1,0 +1,28 @@
+{
+    "name": "Demos Knockoutjs",
+    "description": "Demonstrations of several Knockout.js utilities",
+    "version": "0.0.1",
+    "homepage": "https://github.com/broken64/demos-knockoutjs",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/broken64/demos-knockoutjs"
+    },
+    "author": {
+        "name": "Martin Quintana",
+        "email": "martin_eq@hotmail.com"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "https://github.com/broken64/demos-knockoutjs/blob/master/LICENSE"
+        }
+    ],
+    "main": "server.js",
+    "engines": {
+        "node": ">= 0.6.x"
+    },
+    "dependencies": {
+    	"express": "3.x.x"
+    },
+    "private": true,
+}

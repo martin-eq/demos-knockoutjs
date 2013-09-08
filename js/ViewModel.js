@@ -2,28 +2,10 @@ function ViewModel(data) {
 	var self = this;
 
 	self.appName = 'Shopping Cart';
-	self.pageName = '';
-
-	self.menuButtons = [
-	{
-		name: 'Home',
-		url: 'index.html'
-	},
-	{ 
-		name: 'Catalog',
-		url: 'catalog.html'
-	},
-	{
-		name: 'Checkout',
-		url: 'checkout.html'
-	}
-	];
 
 	// Convert fakeItem's properties to observable properties
-	self.availableItems = ko.observable(fakeItems);
+	self.availableItems = ko.observableArray();
 	self.checkoutItems = ko.observableArray();
-	// Get latest fakeItems
-	self.latestItems = ko.observableArray(fakeItems.reverse().slice(0, 5));
 	self.errorMessage = ko.observable('');
 	self.filter = ko.observable('');
 
@@ -36,14 +18,14 @@ function ViewModel(data) {
 	self.addItemToCheckout = function(newItem) {
 		newItem = new Item(newItem);
 		// Check if item exits
-		var i, 
-		item,
-		found = false, 
-		length = self.checkoutItems().length;
+		var i 
+		, item
+		, found = false
+		, length = self.checkoutItems().length;
 		for(i = 0; i < length; i+=1) {
 			item = self.checkoutItems()[i];
 			if(newItem.id() === item.id()) {
-				self.showAlert('The item "'+ item.name() +'" already exists on cart');
+				helpers.showAlert('The item "'+ item.name() +'" already exists on cart');
 				found = true;
 				break;
 			}
@@ -52,33 +34,33 @@ function ViewModel(data) {
 			self.checkoutItems.push(newItem);
 	};
 
-	self.filteredItems = ko.computed(function() {
-		var filter = self.filter().toLowerCase();
-		if (!filter) {
-			return [];
-		} else {
-			return ko.utils.arrayFilter(self.availableItems(), function(item) {
-				// Filter if name starts with filter
-				//stringStartsWith(item.name.toLowerCase(), filter);
-				// Filter if name contains filter
-				return  item.name.indexOf(filter) !== -1;
-			});
-		}
-	});
-
-	self.showAlert = function(msg) {
-		self.errorMessage(msg);
-		$('.alert').show();
-	};
-	self.hideAlert = function() {
-		self.errorMessage('');
-		$('.alert').hide();
+	self.getAvailableItems = function() {
+		$.getJSON('/availableItems').done(function(data) {
+			if(data) {
+				data = data || {};
+				self.availableItems(data.availableItems);
+			}
+		});
 	};
 
-	var stringStartsWith = function (string, startsWith) {          
-		string = string || "";
-		if (startsWith.length > string.length)
-			return false;
-		return string.substring(0, startsWith.length) === startsWith;
-	};
+	// Get available items on page load
+	self.getAvailableItems();
+
+	self.chosenSectionName = ko.observable();
+	self.chosenSectionData = ko.observable();
+	self.chosenSectionVM = ko.observable();
+
+	// Client-side routes    
+    Sammy(function() {
+        this.get('#/:section', function() {
+        	var sectionName = this.params.section;
+            self.chosenSectionName(sectionName);
+            helpers.setSelectedSection(sectionName)
+            $.get("/section", { name: sectionName }).done(helpers.applySectionToDOM);
+            // TODO: Get data for every section
+            //$.getJSON("/sectionData", { name: this.params.section }).done(helpers.applySectionDataToVM);
+        });
+    
+        this.get('', function() { this.app.runRoute('get', '#/home') });
+    }).run();
 }

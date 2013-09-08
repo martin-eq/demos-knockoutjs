@@ -1,0 +1,14 @@
+<div class="row">
+	<div class="col-md-8">
+		<h3>Latest Items</h3>
+		<ol id="lastestItems" data-bind="foreach: latestItems">
+			<li><a href="#" data-bind="text: name"></a></li>
+		</ol>
+	</div>
+	<div class="col-md-4">
+		<h3>Filtered Items</h3>
+		<ul data-bind="foreach: filteredItems">
+			<li><a href="#" data-bind="text: name"></a></li>
+		</ul>
+	</div>
+</div>
