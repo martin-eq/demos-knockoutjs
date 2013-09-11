@@ -1,10 +1,17 @@
 var express = require('express'),
+	winston = require('winston'),
 	fs = require('fs');
 
 var app = express();
 
+// Winston configuration
+winston.add(winston.transports.File, { filename: 'debug-exceptions.log' });
+winston.handleExceptions(new winston.transports.File({ filename: 'exceptions.log' }));
+
 app.configure(function() {
-	app.use(express.static(__dirname));
+	var oneDay = 86400000;
+	app.use(express.compress());
+	app.use(express.static(__dirname), { maxAge: oneDay });
 });
 
 app.get('/section', function(req, res, next) {
@@ -14,9 +21,7 @@ app.get('/section', function(req, res, next) {
 		if(data) {
 			res.send(data);
 		} else {
-			next({
-				Error: 'No section file found'
-			});
+			next(new Error('No section file found'));
 		}
 	});
 });
@@ -29,9 +34,7 @@ app.get('/sectionData', function(req, res, next) {
 			res.set('Content-Type', 'application/json');
 			res.send(data);
 		} else {
-			next({
-				Error: 'No section data file found'
-			});
+			next(new Error('No section data file found'));
 		}
 	});
 });
@@ -44,13 +47,15 @@ app.get('/availableItems', function(req, res, next) {
 			res.set('Content-Type', 'application/json');
 			res.send(data);
 		} else {
-			next({
-				Error: 'No available items data found'
-			});
+			next(new Error('No available items data found'));
 		}
 	});
 });
 
+app.use(function(err, req, res, next){
+	winston.error('Exception happended!', err);
+});
+
 app.listen(80);
-console.log('Server started on port 80');
-console.log('Press Ctrl+C to exit');
+winston.info('Server started on port 80');
+winston.info('Press Ctrl+C to exit');

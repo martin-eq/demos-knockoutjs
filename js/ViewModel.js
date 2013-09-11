@@ -18,10 +18,10 @@ function ViewModel(data) {
 	self.addItemToCheckout = function(newItem) {
 		newItem = new Item(newItem);
 		// Check if item exits
-		var i 
-		, item
-		, found = false
-		, length = self.checkoutItems().length;
+		var i,
+		item,
+		found = false,
+		length = self.checkoutItems().length;
 		for(i = 0; i < length; i+=1) {
 			item = self.checkoutItems()[i];
 			if(newItem.id() === item.id()) {
@@ -53,14 +53,18 @@ function ViewModel(data) {
 	// Client-side routes    
     Sammy(function() {
         this.get('#/:section', function() {
-        	var sectionName = this.params.section;
+			var sectionName = this.params.section;
             self.chosenSectionName(sectionName);
-            helpers.setSelectedSection(sectionName)
-            $.get("/section", { name: sectionName }).done(helpers.applySectionToDOM);
+			helpers.setSelectedSection(sectionName);
+			if(helpers.sectionCache[sectionName]) {
+				helpers.applySectionToDOM(sectionName);
+			} else {
+				$.get("/section", { name: sectionName }).done(helpers.applySectionToDOM.bind(null, sectionName));
+            }
             // TODO: Get data for every section
             //$.getJSON("/sectionData", { name: this.params.section }).done(helpers.applySectionDataToVM);
         });
     
-        this.get('', function() { this.app.runRoute('get', '#/home') });
+        this.get('', function() { this.app.runRoute('get', '#/home'); });
     }).run();
 }
